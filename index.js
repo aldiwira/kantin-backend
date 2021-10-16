@@ -1,14 +1,33 @@
-const express = require("express");
-const { response } = require("./helper");
-require("dotenv").config();
+const express = require('express');
+const { routes } = require('./controller');
+const { db } = require('./helper');
+const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.port || 3000;
 
-app.get("/", (req, res) => {
-  res.json(response.set(true, 200, "Connected to backend server."));
+app.use(helmet());
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json(response.set(true, 'Connected to backend server.'));
+});
+
+routes(app);
+
+app.use((error, req, res, next) => {
+  res.json(response.set(false, error.message, false));
 });
 
 app.listen(port, () => {
+  const connection = db.connection;
+  connection.on('error', () => (err) => {
+    throw new Error(err);
+  });
   console.log(`Server running at ${port}`);
 });
