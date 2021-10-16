@@ -1,0 +1,19 @@
+{
+  "name": "kantin-backend",
+  "version": "1.0.0",
+  "description": "kantin app backend ",
+  "main": "index.js",
+  "author": "aldiwira<aldiwira.aw@gmail.com",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev" : "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "mongoose": "^6.0.11"
+  }
+}
