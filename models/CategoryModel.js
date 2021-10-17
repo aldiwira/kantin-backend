@@ -6,6 +6,11 @@ const category = new Mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      required: true,
+      default: 'ready',
+    },
   },
   {
     timestamps: {

@@ -23,9 +23,9 @@ module.exports = {
     });
   },
   categoryPost: async (req, res, next) => {
-    const { name } = req.body;
+    const { name, status } = req.body;
     await categoryModel
-      .create({ name })
+      .create({ name, status })
       .then((datas) => {
         res
           .status(200)
@@ -37,10 +37,10 @@ module.exports = {
   },
   categoryPut: (req, res, next) => {
     const { _id } = req.params;
-    const { name } = req.body;
+    const { name, status } = req.body;
     try {
       categoryModel
-        .findOneAndUpdate({ _id }, { name })
+        .findOneAndUpdate({ _id }, { name, status })
         .clone()
         .then((datas) => {
           if (datas == null)
