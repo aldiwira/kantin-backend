@@ -1,6 +1,10 @@
 const yup = require('yup');
 module.exports = {
-  registerValidator: () => {
-    username: yup.string
-  }
-}
+  product: () =>
+    yup.object().shape({
+      name: yup.string().required(),
+      stock: yup.number().required(),
+      price: yup.number().required(),
+      kategori: yup.number().required(),
+    }),
+};

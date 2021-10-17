@@ -5,7 +5,7 @@ const categoryRoutes = require('./categoryRoutes');
 const routes = (app) => {
   const routes = [
     { route: '/', controller: userRoutes },
-    { route: '/product', controller: productRoutes },
+    { route: '/products', controller: productRoutes },
     { route: '/categories', controller: categoryRoutes },
   ];
   routes.map((v, i) => {

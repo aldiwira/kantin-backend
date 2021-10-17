@@ -14,10 +14,6 @@ const product = new Mongoose.Schema(
       type: Number,
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
-    },
     kategori: {
       type: Mongoose.Schema.Types.ObjectId,
       ref: 'categories',
