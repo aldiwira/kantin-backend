@@ -17,10 +17,12 @@ const product = new Mongoose.Schema(
     kategori: {
       type: Mongoose.Schema.Types.ObjectId,
       ref: 'categories',
+      required: true,
     },
     user: {
       type: Mongoose.Schema.Types.ObjectId,
       ref: 'users',
+      required: true,
     },
   },
   {

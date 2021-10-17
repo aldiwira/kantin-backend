@@ -3,34 +3,48 @@ const { response } = require('../helper');
 
 module.exports = {
   productGet: (req, res, next) => {
-    const { _id } = req.query;
+    const { _id, kategori_id } = req.query;
     let searchQuery = {};
     if (_id != null) {
       searchQuery = { _id };
+    } else if (kategori_id != null) {
+      searchQuery = { kategori: kategori_id };
     }
-    productModel.find(searchQuery, (err, result) => {
-      if (result) {
-        res
-          .status(200)
-          .json(response.set(true, 'Berhasil menampilkan data', result));
-      } else {
-        res
-          .status(400)
-          .json(
-            response.set(false, 'data yang dicari tidak ditemukan', result)
-          );
-      }
-    });
+    try {
+      productModel
+        .find(searchQuery)
+        .populate('kategori', '_id, name')
+        .populate('user', '_id, username')
+        .select('name stock price kategori user')
+        .then((result) => {
+          if (result != null && result.length != 0) {
+            res
+              .status(200)
+              .json(response.set(true, 'Berhasil menampilkan data', result));
+          } else {
+            res
+              .status(400)
+              .json(
+                response.set(false, 'data yang dicari tidak ditemukan', result)
+              );
+          }
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    } catch (error) {
+      next(error);
+    }
   },
   productPost: async (req, res, next) => {
-    const { name, stock, price, id_kategori } = req.body;
+    const { name, stock, price, kategori_id } = req.body;
     try {
       await productModel
         .create({
           name,
           stock,
           price,
-          kategori: id_kategori,
+          kategori: kategori_id,
           user: req.payload._id,
         })
         .then((datas) => {
