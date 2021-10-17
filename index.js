@@ -1,6 +1,6 @@
 const express = require('express');
-const { routes } = require('./controller');
-const { db } = require('./helper');
+const { routes } = require('./routes');
+const { db, response } = require('./helper');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 routes(app);
 
 app.use((error, req, res, next) => {
-  res.json(response.set(false, error.message, false));
+  res.status(500).json(response.set(false, error.message, false));
 });
 
 app.listen(port, () => {

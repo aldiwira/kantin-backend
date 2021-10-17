@@ -1,10 +1,4 @@
-const userController = require('./userscontroller');
+const userController = require('./UserController');
+const categoryController = require('./categoryRoutes');
 
-const routes = (app) => {
-  const routes = [{ route: '/', controller: userController }];
-  routes.map((v, i) => {
-    app.use(v.route, v.controller);
-  });
-};
-
-module.exports = { routes };
+module.exports = { userController, categoryController };
