@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const response = require('./response');
+require('dotenv').config();
 const secretKey = process.env.secretkey;
 
 module.exports = {
@@ -20,17 +22,21 @@ module.exports = {
   JWTAuth: (req, res, next) => {
     const { authorization } = req.headers;
     const token = authorization ? authorization.split(' ')[1] : undefined;
-    if (token) {
-      jwt.verify(authorization, secretKey, (err, decode) => {
-        if (err) {
-          throw new Error(err.message);
-        } else {
-          req.payload = decode;
-          next();
-        }
-      });
-    } else {
-      throw new Error('Invalid Signature Token Key');
+    try {
+      if (token) {
+        jwt.verify(token, secretKey, (err, decode) => {
+          if (err) {
+            throw new Error(err);
+          } else {
+            req.payload = decode;
+            next();
+          }
+        });
+      } else {
+        throw new Error('Invalid Signature Token Key');
+      }
+    } catch (error) {
+      next(error);
     }
   },
 };

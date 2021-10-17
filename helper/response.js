@@ -3,7 +3,7 @@ module.exports = {
     return {
       status,
       message,
-      data: data ? data : null,
+      datas: data ? data : null,
     };
   },
 };
