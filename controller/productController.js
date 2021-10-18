@@ -5,9 +5,9 @@ module.exports = {
   productGet: (req, res, next) => {
     const { _id, kategori_id } = req.query;
     let searchQuery = {};
-    if (_id != null) {
+    if (_id) {
       searchQuery = { _id };
-    } else if (kategori_id != null) {
+    } else if (kategori_id) {
       searchQuery = { kategori: kategori_id };
     }
     try {
@@ -24,9 +24,7 @@ module.exports = {
           } else {
             res
               .status(400)
-              .json(
-                response.set(false, 'data yang dicari tidak ditemukan', result)
-              );
+              .json(response.set(false, 'data yang dicari tidak ditemukan'));
           }
         })
         .catch((err) => {
@@ -37,7 +35,7 @@ module.exports = {
     }
   },
   productPost: async (req, res, next) => {
-    const { name, stock, price, kategori_id } = req.body;
+    const { name, stock, price, kategori_id, user_id } = req.body;
     try {
       await productModel
         .create({
@@ -45,7 +43,7 @@ module.exports = {
           stock,
           price,
           kategori: kategori_id,
-          user: req.payload._id,
+          user: user_id,
         })
         .then((datas) => {
           res
@@ -63,12 +61,12 @@ module.exports = {
   },
   productPut: (req, res, next) => {
     const { _id } = req.params;
-    const { name, stock, price, id_kategori } = req.body;
+    const { name, stock, price, kategori_id, user_id } = req.body;
     try {
       productModel
         .findOneAndUpdate(
           { _id },
-          { name, stock, price, kategori: id_kategori, user: req.payload._id }
+          { name, stock, price, kategori: id_kategori, user: user_id }
         )
         .clone()
         .then((datas) => {
