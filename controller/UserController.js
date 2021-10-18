@@ -14,16 +14,12 @@ module.exports = {
               .json(response.set(false, 'Akun anda tidak ditemukan'));
           } else {
             if (await bcrypts.compare(password, users.password)) {
-              const data = {
-                token: await jwt.JWTSign(users._id, users.role),
-                users,
-              };
               await res
                 .status(200)
-                .json(response.set(true, 'Berhasil melakukan login', data));
+                .json(response.set(true, 'Berhasil melakukan login', users));
             } else {
               await res
-                .status(200)
+                .status(400)
                 .json(response.set(false, 'Password yang anda masukkan salah'));
             }
           }
@@ -55,14 +51,10 @@ module.exports = {
             })
             .then(async (datas) => {
               if (datas) {
-                const data = {
-                  token: await jwt.JWTSign(datas._id, datas.role),
-                  users: datas,
-                };
                 res
                   .status(200)
                   .json(
-                    response.set(true, 'Berhasil membuat account baru', data)
+                    response.set(true, 'Berhasil membuat account baru', datas)
                   );
               }
             })

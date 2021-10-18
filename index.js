@@ -11,7 +11,7 @@ const port = process.env.port || 3000;
 
 app.use(helmet());
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
