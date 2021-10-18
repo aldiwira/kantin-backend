@@ -25,14 +25,20 @@ module.exports = {
         populate: { path: 'product', select: 'name stock price' },
       })
       .then((datas) => {
-        if (datas != null && datas.length != 0) {
-          res
-            .status(200)
-            .json(response.set(true, 'Berhasil membuat data baru', datas));
+        if (id || user_id) {
+          if (datas) {
+            res
+              .status(200)
+              .json(response.set(true, 'Berhasil menampilkan data', datas));
+          } else {
+            res
+              .status(400)
+              .json(response.set(false, 'Data yang dicari tidak ditemukan'));
+          }
         } else {
           res
-            .status(400)
-            .json(response.set(false, 'data yang dicari tidak ditemukan'));
+            .status(200)
+            .json(response.set(true, 'Berhasil menampilkan data', datas));
         }
       });
   },
