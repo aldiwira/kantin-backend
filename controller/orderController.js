@@ -18,7 +18,7 @@ module.exports = {
     }
     await orderModel
       .find(searchQuery)
-      .populate('user', '_id username')
+      .populate('user', '_id username kelas')
       .populate({
         path: 'items',
         select: 'product jumlah',
@@ -50,10 +50,11 @@ module.exports = {
         user: user_id,
         method,
         total: total,
+        status: true
       });
       await order.save();
       await items.map(async (datas, i) => {
-        const temp_datas = JSON.parse(datas);
+        const temp_datas = typeof datas === "object" ? datas : JSON.parse(datas);
         const { product_id, quantity } = temp_datas;
         const detail = await detailOrderModel.create({
           product: product_id,
@@ -68,7 +69,7 @@ module.exports = {
 
       await orderModel
         .find({ _id: order._id })
-        .populate('user', '_id username')
+        .populate('user', '_id username kelas')
         .populate({
           path: 'items',
           select: 'product jumlah',
@@ -82,6 +83,22 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+  orderChangeStatus: async (req, res, next) => {
+    const { _id } = req.params;
+    await orderModel.findByIdAndUpdate(_id, { status: false })
+      .clone()
+      .populate('user', '_id username')
+      .populate({
+        path: 'items',
+        select: 'product jumlah',
+        populate: { path: 'product', select: 'name stock price' },
+      })
+      .exec((err, orders) => {
+        res
+          .status(200)
+          .json(response.set(true, 'Berhasil mengubah status', orders));
+      });
   },
   orderPut: (req, res, next) => { },
   orderDelete: async (req, res, next) => { },
