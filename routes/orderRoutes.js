@@ -6,6 +6,6 @@ const route = Router();
 route.get('/', orderController.orderGet);
 route.post('/', orderController.orderPost);
 // route.put('/:_id/edit', orderController.orderPost);
-// route.delete('/:_id/delete', orderController.orderDelete);
+// route.delete('/:_id', orderController.orderDelete);
 
 module.exports = route;

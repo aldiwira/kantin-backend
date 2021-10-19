@@ -44,22 +44,23 @@ module.exports = {
   },
   orderPost: async (req, res, next) => {
     // items as array
-    const { user_id, method, items } = req.body;
+    const { user_id, method, total, items } = req.body;
     try {
       const order = await orderModel.create({
         user: user_id,
         method,
-        total: items.length,
+        total: total,
       });
       await order.save();
       await items.map(async (datas, i) => {
-        const { item_id, jumlah } = datas;
+        const temp_datas = JSON.parse(datas);
+        const { product_id, quantity } = temp_datas;
         const detail = await detailOrderModel.create({
-          product: item_id,
+          product: product_id,
           order_id: order._id,
-          jumlah,
+          jumlah: quantity,
         });
-        await changeStock(item_id, jumlah);
+        await changeStock(product_id, quantity);
         const temp_order = await orderModel.findById({ _id: order._id });
         temp_order.items.push(detail);
         await temp_order.save();
@@ -82,6 +83,6 @@ module.exports = {
       next(err);
     }
   },
-  orderPut: (req, res, next) => {},
-  orderDelete: (req, res, next) => {},
+  orderPut: (req, res, next) => { },
+  orderDelete: async (req, res, next) => { },
 };
