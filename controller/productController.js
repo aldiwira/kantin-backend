@@ -66,7 +66,7 @@ module.exports = {
       productModel
         .findOneAndUpdate(
           { _id },
-          { name, stock, price, kategori: id_kategori, user: user_id }
+          { name, stock, price, kategori: kategori_id, user: user_id }
         )
         .clone()
         .then((datas) => {
