@@ -11,6 +11,10 @@ const orders = new Mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: Boolean,
+      required: true,
+    },
     total: {
       type: Number,
     },

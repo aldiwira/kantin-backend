@@ -67,7 +67,7 @@ module.exports = {
         await temp_order.save();
       });
 
-      await orderModel
+      orderModel
         .find({ _id: order._id })
         .populate('user', '_id username kelas')
         .populate({
