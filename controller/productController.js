@@ -3,26 +3,29 @@ const { productModel } = require('../models');
 const { response } = require('../helper');
 
 const deleteFile = (filepath) => {
-  fs.unlink(filepath, (err) => {
-    if (err) throw new Error(err)
-  });
+  if (filepath != "uploads/default.jpg") {
+    fs.unlink(filepath, (err) => {
+      if (err) throw new Error(err)
+    });
+  }
 }
 
 module.exports = {
   productGet: (req, res, next) => {
-    const { _id, kategori_id } = req.query;
+    const { _id, kategori_id, user_id } = req.query;
     let searchQuery = {};
     if (_id) {
       searchQuery = { _id };
     } else if (kategori_id) {
       searchQuery = { kategori: kategori_id };
+    } else if (user_id) {
+      searchQuery = { user: user_id };
     }
     try {
       productModel
         .find(searchQuery)
         .populate('kategori', '_id, name')
         .populate('user', '_id, username')
-        .select('name stock price kategori user')
         .then((result) => {
           if (result != null && result.length != 0) {
             res
@@ -33,6 +36,8 @@ module.exports = {
               .status(400)
               .json(response.set(false, 'data yang dicari tidak ditemukan'));
           }
+        }).catch(err => {
+          throw new Error(err)
         })
         .catch((err) => {
           throw new Error(err);
@@ -117,7 +122,7 @@ module.exports = {
               .status(400)
               .json(response.set(false, 'Data yang dicari tidak ditemukan'));
           else {
-            deleteFile(`uploads/${datas.images.split('/')[2]}`)
+            if (datas.images != undefined) deleteFile(`uploads/${datas.images.split('/')[2]}`)
             res.status(200).json(response.set(true, `Berhasil menghapus produk ${datas.name}`))
           };
         })

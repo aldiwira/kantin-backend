@@ -26,7 +26,7 @@ const product = new Mongoose.Schema(
     },
     images: {
       type: String,
-      default: "default.jpg"
+      default: "public/images/default.jpg"
     }
   },
   {
