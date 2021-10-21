@@ -1,5 +1,12 @@
+const fs = require('fs')
 const { productModel } = require('../models');
 const { response } = require('../helper');
+
+const deleteFile = (filepath) => {
+  fs.unlink(filepath, (err) => {
+    if (err) throw new Error(err)
+  });
+}
 
 module.exports = {
   productGet: (req, res, next) => {
@@ -36,12 +43,20 @@ module.exports = {
   },
   productPost: async (req, res, next) => {
     const { name, stock, price, kategori_id, user_id } = req.body;
+    let images = ""
     try {
+      if (!req.file) {
+        images = "default.jpeg"
+      } else {
+        images = req.file.filename
+      }
+
       await productModel
         .create({
           name,
           stock,
           price,
+          images: `public/images/${images}`,
           kategori: kategori_id,
           user: user_id,
         })
@@ -59,47 +74,59 @@ module.exports = {
       next(error);
     }
   },
-  productPut: (req, res, next) => {
+  productPut: async (req, res, next) => {
     const { _id } = req.params;
     const { name, stock, price, kategori_id, user_id } = req.body;
     try {
-      productModel
-        .findOneAndUpdate(
-          { _id },
-          { name, stock, price, kategori: kategori_id, user: user_id }
-        )
-        .clone()
-        .then((datas) => {
-          if (datas == null)
-            res
-              .status(400)
-              .json(response.set(false, 'Data yang dicari tidak ditemukan'));
-          else
+      const productM = await productModel.findOne({ _id })
+      if (productM == null) {
+        res
+          .status(400)
+          .json(response.set(false, 'Data yang dicari tidak ditemukan'));
+      } else {
+        if (req.file) {
+          deleteFile(`uploads/${productM.images.split('/')[2]}`)
+        }
+        productM.name = name
+        productM.stock = stock
+        productM.price = price
+        productM.kategori_id = kategori_id
+        productM.user_id = user_id
+        productM.images = !req.file ? productM.images : `public/images/${req.file.filename}`
+        await productM.save().then(saved => {
+          if (saved === productM) {
             res
               .status(200)
-              .json(response.set(true, 'Berhasil mengubah produk', datas));
+              .json(response.set(true, `Berhasil mengubah produk ${saved.name}`, saved));
+          }
         })
-        .catch((err) => {
-          throw new Error(err);
-        });
+      }
     } catch (error) {
       next(error);
     }
   },
   productDelete: (req, res, next) => {
     const { _id } = req.params;
-    productModel
-      .findByIdAndDelete(_id)
-      .clone()
-      .then((datas) => {
-        if (datas == null)
-          res
-            .status(400)
-            .json(response.set(false, 'Data yang dicari tidak ditemukan'));
-        else res.status(200).json(response.set(true, 'Data berhasil dihapus'));
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+    try {
+      productModel
+        .findByIdAndDelete(_id)
+        .clone()
+        .then((datas) => {
+          if (datas == null)
+            res
+              .status(400)
+              .json(response.set(false, 'Data yang dicari tidak ditemukan'));
+          else {
+            deleteFile(`uploads/${datas.images.split('/')[2]}`)
+            res.status(200).json(response.set(true, `Berhasil menghapus produk ${datas.name}`))
+          };
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    } catch (err) {
+      next(err)
+    }
+
   },
 };

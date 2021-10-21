@@ -24,6 +24,10 @@ const product = new Mongoose.Schema(
       ref: 'users',
       required: true,
     },
+    images: {
+      type: String,
+      default: "default.jpg"
+    }
   },
   {
     timestamps: {
