@@ -13,6 +13,7 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 app.use('/public/images', express.static('uploads'));
 
 app.get('/', (req, res) => {
